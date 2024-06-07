@@ -44,15 +44,26 @@ public class HomeServlet extends HttpServlet {
 
 			request.getSession().setAttribute("categorie", categorie);
 			
-
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
 		
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/" + redirectedPage);
-		dispatcher.forward(request, response);
+		if (isValidPage(redirectedPage)) {
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/" + redirectedPage);
+            dispatcher.forward(request, response);
+        } else {
+            response.sendRedirect("");
+        }
 	}
+	
+	private boolean isValidPage(String page) {
+        // Controlla che il parametro "page" non punti a file sensibili
+        if (page == null) {
+            return false;
+        }
+        return !page.equals("META-INF/context.xml") && !page.equals("WEB-INF/web.xml");
+    }
 
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
